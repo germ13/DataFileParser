@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Reflection;
 
 namespace germ13
@@ -23,6 +24,16 @@ namespace germ13
                 count++;
             }
             return pi;
+        }
+
+        public PropertyInfo[] getFieldProperty(int position)
+        {
+            var query = from property in base.GetType().GetProperties()
+                        let orderAttribute = property.GetCustomAttributes(typeof(FieldAttribute), false).SingleOrDefault() as FieldAttribute
+                        where property.GetMethod != null  && orderAttribute.Position == position// filter for public properties
+                        orderby orderAttribute.Position
+                        select property;
+            return query.ToArray();
         }
 
     }
